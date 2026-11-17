@@ -1,4 +1,5 @@
-developer_key
-bin
-reference-images
 .DS_Store
+bin
+developer_key
+reference-images
+versions
