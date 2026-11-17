@@ -4,6 +4,7 @@ import Toybox.System;
 import Toybox.WatchUi;
 
 class InfoCatView extends WatchUi.WatchFace {
+    var background;
 
     function initialize() {
         WatchFace.initialize();
@@ -18,18 +19,23 @@ class InfoCatView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
+        background = WatchUi.loadResource(Rez.Drawables.Cat);
     }
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
-        // Get and show the current time
         var clockTime = System.getClockTime();
-        var timeString = Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]);
-        var view = View.findDrawableById("TimeLabel") as Text;
-        view.setText(timeString);
+        var hoursText = Lang.format("$1$", [clockTime.hour]);
+        var minutesText = clockTime.min.format("%02d");
+        var faceWidth = dc.getWidth();
+        var faceHeight = dc.getHeight();
 
-        // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
+
+        dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(faceWidth * 0.292, faceHeight * 0.39, Graphics.FONT_LARGE, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.708, faceHeight * 0.39, Graphics.FONT_LARGE, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     // Called when this View is removed from the screen. Save the
