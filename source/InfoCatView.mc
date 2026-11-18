@@ -1,5 +1,7 @@
+import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
 import Toybox.System;
 import Toybox.WatchUi;
 
@@ -7,6 +9,7 @@ class InfoCatView extends WatchUi.WatchFace {
     private var faceWidth;
     private var faceHeight;
     private var background;
+    private var pawPrints;
 
     function initialize() {
         WatchFace.initialize();
@@ -17,6 +20,7 @@ class InfoCatView extends WatchUi.WatchFace {
         faceWidth = dc.getWidth();
         faceHeight = dc.getHeight();
         background = WatchUi.loadResource(Rez.Drawables.Cat);
+        pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -32,6 +36,7 @@ class InfoCatView extends WatchUi.WatchFace {
 
         drawBackground(dc);
         drawTime(dc);
+        drawSteps(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -61,6 +66,33 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(faceWidth * 0.3, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    private function drawSteps(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+
+        if ((activityInfo has :steps) && (activityInfo.steps != null)) {
+            var steps = activityInfo.steps;
+            var stepsText = steps.toString();
+            if (steps >= 100000) {
+                // Convert steps to this 123456 = 123k
+                stepsText = (steps.toFloat() / 1000.0).format("%.0f") + "k";
+            } else if (steps >= 10000) {
+                // Convert steps to this 12345 = 12.3k
+                var tenthsOfThousands = Math.floor(steps.toFloat() / 100.0);
+                stepsText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
+            }
+
+            var font = Graphics.FONT_XTINY;
+            var iconX = faceWidth * 0.51;
+            var iconSize = Graphics.getFontHeight(font);
+            var textX = iconX + iconSize;
+            var y = faceHeight * 0.74;
+
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
+            dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
+        }
     }
 
 }
