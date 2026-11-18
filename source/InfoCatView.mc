@@ -1,3 +1,4 @@
+import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.System;
@@ -7,6 +8,7 @@ class InfoCatView extends WatchUi.WatchFace {
     private var faceWidth;
     private var faceHeight;
     private var background;
+    private var pawPrints;
 
     function initialize() {
         WatchFace.initialize();
@@ -17,6 +19,7 @@ class InfoCatView extends WatchUi.WatchFace {
         faceWidth = dc.getWidth();
         faceHeight = dc.getHeight();
         background = WatchUi.loadResource(Rez.Drawables.Cat);
+        pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -32,6 +35,7 @@ class InfoCatView extends WatchUi.WatchFace {
 
         drawBackground(dc);
         drawTime(dc);
+        drawSteps(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -61,6 +65,23 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(faceWidth * 0.3, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    private function drawSteps(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+
+        if ((activityInfo has :steps) && (activityInfo.steps != null)) {
+            var stepsText = activityInfo.steps.toString();
+            var font = Graphics.FONT_XTINY;
+            var iconX = faceWidth * 0.51;
+            var iconSize = Graphics.getFontHeight(font);
+            var textX = iconX + iconSize;
+            var y = faceHeight * 0.74;
+
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
+            dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
+        }
     }
 
 }
