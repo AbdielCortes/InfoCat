@@ -1,6 +1,7 @@
 import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
 import Toybox.System;
 import Toybox.WatchUi;
 
@@ -71,7 +72,17 @@ class InfoCatView extends WatchUi.WatchFace {
         var activityInfo = ActivityMonitor.getInfo();
 
         if ((activityInfo has :steps) && (activityInfo.steps != null)) {
-            var stepsText = activityInfo.steps.toString();
+            var steps = activityInfo.steps;
+            var stepsText = steps.toString();
+            if (steps >= 100000) {
+                // Convert steps to this 123456 = 123k
+                stepsText = (steps.toFloat() / 1000.0).format("%.0f") + "k";
+            } else if (steps >= 10000) {
+                // Convert steps to this 12345 = 12.3k
+                var tenthsOfThousands = Math.floor(steps.toFloat() / 100.0);
+                stepsText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
+            }
+
             var font = Graphics.FONT_XTINY;
             var iconX = faceWidth * 0.51;
             var iconSize = Graphics.getFontHeight(font);
