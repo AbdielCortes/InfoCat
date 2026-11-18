@@ -4,7 +4,9 @@ import Toybox.System;
 import Toybox.WatchUi;
 
 class InfoCatView extends WatchUi.WatchFace {
-    var background;
+    private var faceWidth;
+    private var faceHeight;
+    private var background;
 
     function initialize() {
         WatchFace.initialize();
@@ -12,6 +14,9 @@ class InfoCatView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc as Dc) as Void {
+        faceWidth = dc.getWidth();
+        faceHeight = dc.getHeight();
+        background = WatchUi.loadResource(Rez.Drawables.Cat);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -19,23 +24,14 @@ class InfoCatView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        background = WatchUi.loadResource(Rez.Drawables.Cat);
     }
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
-        var clockTime = System.getClockTime();
-        var hoursText = Lang.format("$1$", [clockTime.hour]);
-        var minutesText = clockTime.min.format("%02d");
-        var faceWidth = dc.getWidth();
-        var faceHeight = dc.getHeight();
-
         View.onUpdate(dc);
 
-        dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(faceWidth * 0.292, faceHeight * 0.39, Graphics.FONT_LARGE, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(faceWidth * 0.708, faceHeight * 0.39, Graphics.FONT_LARGE, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+        drawBackground(dc);
+        drawTime(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -50,6 +46,21 @@ class InfoCatView extends WatchUi.WatchFace {
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
+    }
+
+    private function drawBackground(dc as Dc) as Void {
+        dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
+    }
+
+    private function drawTime(dc as Dc) as Void {
+        var clockTime = System.getClockTime();
+        var hoursText = Lang.format("$1$", [clockTime.hour]);
+        var minutesText = clockTime.min.format("%02d");
+        var timeFont = Graphics.getVectorFont({:face => "RobotoCondensedBold", :size => 61});
+
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(faceWidth * 0.3, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
 }
