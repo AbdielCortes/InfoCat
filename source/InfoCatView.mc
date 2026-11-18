@@ -27,15 +27,18 @@ class InfoCatView extends WatchUi.WatchFace {
         var clockTime = System.getClockTime();
         var hoursText = Lang.format("$1$", [clockTime.hour]);
         var minutesText = clockTime.min.format("%02d");
+        var timeFont = Graphics.getVectorFont({:face => "RobotoCondensedRegular", :size =>64});
         var faceWidth = dc.getWidth();
         var faceHeight = dc.getHeight();
 
         View.onUpdate(dc);
 
+        // Draw cat background
         dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
+        // Draw hour and minutes
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(faceWidth * 0.292, faceHeight * 0.39, Graphics.FONT_LARGE, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(faceWidth * 0.708, faceHeight * 0.39, Graphics.FONT_LARGE, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.31, faceHeight * 0.34, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.7, faceHeight * 0.34, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     // Called when this View is removed from the screen. Save the
