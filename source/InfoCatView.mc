@@ -89,7 +89,7 @@ class InfoCatView extends WatchUi.WatchFace {
             var textX = iconX + iconSize;
             var y = faceHeight * 0.74;
 
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
             dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
             dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
         }
