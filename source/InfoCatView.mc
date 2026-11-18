@@ -4,7 +4,8 @@ import Toybox.System;
 import Toybox.WatchUi;
 
 class InfoCatView extends WatchUi.WatchFace {
-    var background;
+    private var background;
+    // private var timeFont;
 
     function initialize() {
         WatchFace.initialize();
@@ -12,6 +13,8 @@ class InfoCatView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc as Dc) as Void {
+        background = WatchUi.loadResource(Rez.Drawables.Cat);
+        // timeFont = WatchUi.loadResource(Rez.Fonts.TimeFont) as WatchUi.FontResource;
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -19,7 +22,6 @@ class InfoCatView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        background = WatchUi.loadResource(Rez.Drawables.Cat);
     }
 
     // Update the view
@@ -27,7 +29,7 @@ class InfoCatView extends WatchUi.WatchFace {
         var clockTime = System.getClockTime();
         var hoursText = Lang.format("$1$", [clockTime.hour]);
         var minutesText = clockTime.min.format("%02d");
-        var timeFont = Graphics.getVectorFont({:face => "RobotoCondensedRegular", :size =>64});
+        var timeFont = Graphics.getVectorFont({:face => "RobotoCondensedRegular", :size => 62});
         var faceWidth = dc.getWidth();
         var faceHeight = dc.getHeight();
 
@@ -37,8 +39,8 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
         // Draw hour and minutes
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(faceWidth * 0.31, faceHeight * 0.34, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(faceWidth * 0.7, faceHeight * 0.34, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.30, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(faceWidth * 0.7, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     // Called when this View is removed from the screen. Save the
