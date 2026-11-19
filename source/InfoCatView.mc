@@ -89,7 +89,6 @@ class InfoCatView extends WatchUi.WatchFace {
         if ((activityInfo has :steps) && (activityInfo.steps != null)) {
             var steps = activityInfo.steps;
             var stepsText = formatActivityCount(steps);
-
             var font = Graphics.FONT_XTINY;
             var iconX = faceWidth * 0.51;
             var iconSize = Graphics.getFontHeight(font);
