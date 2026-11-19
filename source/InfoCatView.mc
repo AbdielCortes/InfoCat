@@ -90,12 +90,12 @@ class InfoCatView extends WatchUi.WatchFace {
             var steps = activityInfo.steps;
             var stepsText = formatActivityCount(steps);
             var font = Graphics.FONT_XTINY;
-            var iconX = faceWidth * 0.51;
+            var iconX = faceWidth * 0.25;
             var iconSize = Graphics.getFontHeight(font);
             var textX = iconX + iconSize;
-            var y = faceHeight * 0.74;
+            var y = faceHeight * 0.05;
 
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
             dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
         }
@@ -107,13 +107,14 @@ class InfoCatView extends WatchUi.WatchFace {
         if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
             var floorsText = formatActivityCount(activityInfo.floorsClimbed);
             var font = Graphics.FONT_XTINY;
+            var iconX = faceWidth * 0.5;
             var iconSize = Graphics.getFontHeight(font);
-            var x = faceWidth * 0.422;
-            var y = faceHeight * 0.74;
+            var textX = iconX + iconSize;
+            var y = faceHeight * 0.05;
 
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x, y, font, floorsText, Graphics.TEXT_JUSTIFY_RIGHT);
-            dc.drawScaledBitmap(x, y, iconSize, iconSize, stairs);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
+            dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 }
