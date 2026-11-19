@@ -4,6 +4,7 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 import Toybox.System;
+import Toybox.Time;
 import Toybox.WatchUi;
 
 class InfoCatView extends WatchUi.WatchFace {
@@ -44,6 +45,7 @@ class InfoCatView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawFloorsClimbed(dc);
         drawHeartRate(dc);
+        drawDate(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -73,6 +75,17 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(faceWidth * 0.3, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    private function drawDate(dc as Dc) as Void {
+        var dateInfo = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+        var dateText = Lang.format("$1$ $2$", [dateInfo.month, dateInfo.day]);
+        var font = Graphics.FONT_TINY;
+        var x = faceWidth * 0.48;
+        var y = faceHeight * 0.7;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, font, dateText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     private function formatActivityCount(count as Number) as String {
