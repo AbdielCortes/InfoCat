@@ -94,8 +94,9 @@ class InfoCatView extends WatchUi.WatchFace {
             var steps = activityInfo.steps;
             var stepsText = formatActivityCount(steps);
             var font = Graphics.FONT_XTINY;
-            var iconX = faceWidth * 0.37;
             var iconSize = Graphics.getFontHeight(font);
+            var textWidth = dc.getTextDimensions(stepsText, font)[0];
+            var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
             var textX = iconX + iconSize;
             var y = faceHeight * 0.11;
 
