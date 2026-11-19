@@ -1,4 +1,5 @@
 import Toybox.ActivityMonitor;
+import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
@@ -11,6 +12,7 @@ class InfoCatView extends WatchUi.WatchFace {
     private var background;
     private var pawPrints;
     private var stairs;
+    private var heart;
 
     function initialize() {
         WatchFace.initialize();
@@ -23,6 +25,7 @@ class InfoCatView extends WatchUi.WatchFace {
         background = WatchUi.loadResource(Rez.Drawables.Cat);
         pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
         stairs = WatchUi.loadResource(Rez.Drawables.Stairs);
+        heart = WatchUi.loadResource(Rez.Drawables.Heart);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -40,6 +43,7 @@ class InfoCatView extends WatchUi.WatchFace {
         drawTime(dc);
         drawSteps(dc);
         drawFloorsClimbed(dc);
+        drawHeartRate(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -90,10 +94,10 @@ class InfoCatView extends WatchUi.WatchFace {
             var steps = activityInfo.steps;
             var stepsText = formatActivityCount(steps);
             var font = Graphics.FONT_XTINY;
-            var iconX = faceWidth * 0.25;
+            var iconX = faceWidth * 0.37;
             var iconSize = Graphics.getFontHeight(font);
             var textX = iconX + iconSize;
-            var y = faceHeight * 0.05;
+            var y = faceHeight * 0.11;
 
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
@@ -107,14 +111,32 @@ class InfoCatView extends WatchUi.WatchFace {
         if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
             var floorsText = formatActivityCount(activityInfo.floorsClimbed);
             var font = Graphics.FONT_XTINY;
-            var iconX = faceWidth * 0.5;
+            var iconX = faceWidth * 0.53;
             var iconSize = Graphics.getFontHeight(font);
             var textX = iconX + iconSize;
-            var y = faceHeight * 0.05;
+            var y = faceHeight * 0.04;
 
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
             dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
         }
+    }
+
+    private function drawHeartRate(dc as Dc) as Void {
+        var activityInfo = Activity.getActivityInfo();
+        var font = Graphics.FONT_XTINY;
+        var iconX = faceWidth * 0.3;
+        var iconSize = Graphics.getFontHeight(font);
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.04;
+        var heartRateText = "--";
+
+        if ((activityInfo has :currentHeartRate) && (activityInfo.currentHeartRate != null)) {
+            heartRateText = activityInfo.currentHeartRate.toString();
+        }
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, heart);
+        dc.drawText(textX, y, font, heartRateText, Graphics.TEXT_JUSTIFY_LEFT);
     }
 }

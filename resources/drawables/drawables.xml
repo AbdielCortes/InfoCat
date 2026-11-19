@@ -3,4 +3,5 @@
     <bitmap id="Cat" filename="cat.png" dithering="none" />
     <bitmap id="PawPrints" filename="paw-prints.png" dithering="none" />
     <bitmap id="Stairs" filename="stairs.png" dithering="none" />
+    <bitmap id="Heart" filename="heart.png" dithering="none" />
 </drawables>
