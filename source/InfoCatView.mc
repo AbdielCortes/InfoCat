@@ -10,6 +10,7 @@ class InfoCatView extends WatchUi.WatchFace {
     private var faceHeight;
     private var background;
     private var pawPrints;
+    private var stairs;
 
     function initialize() {
         WatchFace.initialize();
@@ -21,6 +22,7 @@ class InfoCatView extends WatchUi.WatchFace {
         faceHeight = dc.getHeight();
         background = WatchUi.loadResource(Rez.Drawables.Cat);
         pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
+        stairs = WatchUi.loadResource(Rez.Drawables.Stairs);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -37,6 +39,7 @@ class InfoCatView extends WatchUi.WatchFace {
         drawBackground(dc);
         drawTime(dc);
         drawSteps(dc);
+        drawFloorsClimbed(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -68,21 +71,24 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
+    private function formatActivityCount(count as Number) as String {
+        var countText = count.toString();
+        if (count >= 100000) {
+            countText = (count.toFloat() / 1000.0).format("%.0f") + "k";
+        } else if (count >= 10000) {
+            var tenthsOfThousands = Math.floor(count.toFloat() / 100.0);
+            countText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
+        }
+
+        return countText;
+    }
+
     private function drawSteps(dc as Dc) as Void {
         var activityInfo = ActivityMonitor.getInfo();
 
         if ((activityInfo has :steps) && (activityInfo.steps != null)) {
             var steps = activityInfo.steps;
-            var stepsText = steps.toString();
-            if (steps >= 100000) {
-                // Convert steps to this 123456 = 123k
-                stepsText = (steps.toFloat() / 1000.0).format("%.0f") + "k";
-            } else if (steps >= 10000) {
-                // Convert steps to this 12345 = 12.3k
-                var tenthsOfThousands = Math.floor(steps.toFloat() / 100.0);
-                stepsText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
-            }
-
+            var stepsText = formatActivityCount(steps);
             var font = Graphics.FONT_XTINY;
             var iconX = faceWidth * 0.51;
             var iconSize = Graphics.getFontHeight(font);
@@ -95,4 +101,19 @@ class InfoCatView extends WatchUi.WatchFace {
         }
     }
 
+    private function drawFloorsClimbed(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+
+        if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
+            var floorsText = formatActivityCount(activityInfo.floorsClimbed);
+            var font = Graphics.FONT_XTINY;
+            var iconSize = Graphics.getFontHeight(font);
+            var x = faceWidth * 0.422;
+            var y = faceHeight * 0.74;
+
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(x, y, font, floorsText, Graphics.TEXT_JUSTIFY_RIGHT);
+            dc.drawScaledBitmap(x, y, iconSize, iconSize, stairs);
+        }
+    }
 }

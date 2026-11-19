@@ -1,5 +1,6 @@
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <bitmap id="LauncherIcon" filename="launcher_icon.svg" dithering="none" />
     <bitmap id="Cat" filename="cat.png" dithering="none" />
-    <bitmap id="PawPrints" filename="paw-prints.svg" dithering="none" />
+    <bitmap id="PawPrints" filename="paw-prints.png" dithering="none" />
+    <bitmap id="Stairs" filename="stairs.png" dithering="none" />
 </drawables>
