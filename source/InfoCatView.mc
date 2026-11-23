@@ -15,6 +15,8 @@ class InfoCatView extends WatchUi.WatchFace {
     private var pawPrints;
     private var stairs;
     private var heart;
+    private var sun;
+    private var moon;
 
     function initialize() {
         WatchFace.initialize();
@@ -28,6 +30,8 @@ class InfoCatView extends WatchUi.WatchFace {
         pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
         stairs = WatchUi.loadResource(Rez.Drawables.Stairs);
         heart = WatchUi.loadResource(Rez.Drawables.Heart);
+        sun = WatchUi.loadResource(Rez.Drawables.Sun);
+        moon = WatchUi.loadResource(Rez.Drawables.Moon);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -103,8 +107,16 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.drawText(x, y, font, temperatureText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    private function drawRoundedArc(dc as Dc, centerX as Lang.Numeric, centerY as Lang.Numeric, radius as Lang.Numeric, startAngle as Lang.Numeric, endAngle as Lang.Numeric, color as Graphics.ColorType) as Void {
-        var lineWidth = 6;
+    private function drawRoundedArc(
+        dc as Dc,
+        centerX as Lang.Numeric,
+        centerY as Lang.Numeric,
+        radius as Lang.Numeric,
+        startAngle as Lang.Numeric,
+        endAngle as Lang.Numeric,
+        color as Graphics.ColorType
+    ) as Void {
+        var lineWidth = 5;
         var capRadius = lineWidth / 2.0;
         var startRadians = startAngle * Math.PI / 180.0;
         var endRadians = endAngle * Math.PI / 180.0;
@@ -136,8 +148,8 @@ class InfoCatView extends WatchUi.WatchFace {
             }
         }
 
-        var startAngle = 240;
-        var endAngle = 300;
+        var startAngle = 245;
+        var endAngle = 295;
         var offset = faceHeight * 0.02;
         var radius = (faceWidth / 2) - offset;
         var centerX = faceWidth / 2;
@@ -152,6 +164,15 @@ class InfoCatView extends WatchUi.WatchFace {
                 drawRoundedArc(dc, centerX, centerY, radius, startAngle, progressEndAngle, Graphics.COLOR_WHITE);
             }
         }
+
+        var iconSize = Graphics.getFontHeight(Graphics.FONT_XTINY);
+        var sunX = faceWidth * 0.22;
+        var sunY = faceHeight * 0.86;
+        var moonX = faceWidth * 0.7;
+        var moonY = faceHeight * 0.865;
+
+        dc.drawScaledBitmap(sunX, sunY, iconSize, iconSize, sun);
+        dc.drawScaledBitmap(moonX, moonY, iconSize, iconSize, moon);
     }
 
     private function drawDate(dc as Dc) as Void {
