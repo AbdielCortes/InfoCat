@@ -15,6 +15,8 @@ class InfoCatView extends WatchUi.WatchFace {
     private var pawPrints;
     private var stairs;
     private var heart;
+    private var sun;
+    private var moon;
 
     function initialize() {
         WatchFace.initialize();
@@ -28,6 +30,8 @@ class InfoCatView extends WatchUi.WatchFace {
         pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
         stairs = WatchUi.loadResource(Rez.Drawables.Stairs);
         heart = WatchUi.loadResource(Rez.Drawables.Heart);
+        sun = WatchUi.loadResource(Rez.Drawables.Sun);
+        moon = WatchUi.loadResource(Rez.Drawables.Moon);
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -42,12 +46,13 @@ class InfoCatView extends WatchUi.WatchFace {
         View.onUpdate(dc);
 
         drawBackground(dc);
+        drawHeartRate(dc);
+        drawFloorsClimbed(dc);
+        drawSteps(dc);
         drawTime(dc);
         drawTemperature(dc);
-        drawSteps(dc);
-        drawFloorsClimbed(dc);
-        drawHeartRate(dc);
         drawDate(dc);
+        drawDaylightProgress(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -66,6 +71,76 @@ class InfoCatView extends WatchUi.WatchFace {
 
     private function drawBackground(dc as Dc) as Void {
         dc.drawScaledBitmap(0, 0, faceWidth, faceHeight, background);
+    }
+
+    private function formatActivityCount(count as Number) as String {
+        var countText = count.toString();
+        if (count >= 100000) {
+            countText = (count.toFloat() / 1000.0).format("%.0f") + "k";
+        } else if (count >= 10000) {
+            var tenthsOfThousands = Math.floor(count.toFloat() / 100.0);
+            countText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
+        }
+
+        return countText;
+    }
+
+    private function drawHeartRate(dc as Dc) as Void {
+        var activityInfo = Activity.getActivityInfo();
+        var heartRateText = "--";
+
+        if ((activityInfo has :currentHeartRate) && (activityInfo.currentHeartRate != null)) {
+            heartRateText = activityInfo.currentHeartRate.toString();
+        }
+
+        var font = Graphics.FONT_XTINY;
+        var iconX = faceWidth * 0.3;
+        var iconSize = Graphics.getFontHeight(font);
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.04;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, heart);
+        dc.drawText(textX, y, font, heartRateText, Graphics.TEXT_JUSTIFY_LEFT);
+    }
+
+    private function drawFloorsClimbed(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+        var floorsText = "--";
+
+        if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
+            floorsText = formatActivityCount(activityInfo.floorsClimbed);
+        }
+
+        var font = Graphics.FONT_XTINY;
+        var iconX = faceWidth * 0.53;
+        var iconSize = Graphics.getFontHeight(font);
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.04;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
+        dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
+    }
+
+    private function drawSteps(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+        var stepsText = "--";
+
+        if ((activityInfo has :steps) && (activityInfo.steps != null)) {
+            stepsText = formatActivityCount(activityInfo.steps);
+        }
+
+        var font = Graphics.FONT_XTINY;
+        var iconSize = Graphics.getFontHeight(font);
+        var textWidth = dc.getTextDimensions(stepsText, font)[0];
+        var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.11;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
+        dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
     private function drawTime(dc as Dc) as Void {
@@ -119,73 +194,71 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.drawText(dayOfMonthX, dayOfMonthY, font, dayOfMonth, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
-    private function formatActivityCount(count as Number) as String {
-        var countText = count.toString();
-        if (count >= 100000) {
-            countText = (count.toFloat() / 1000.0).format("%.0f") + "k";
-        } else if (count >= 10000) {
-            var tenthsOfThousands = Math.floor(count.toFloat() / 100.0);
-            countText = (tenthsOfThousands / 10.0).format("%.1f") + "k";
-        }
+    private function drawRoundedArc(
+        dc as Dc,
+        centerX as Lang.Numeric,
+        centerY as Lang.Numeric,
+        radius as Lang.Numeric,
+        startAngle as Lang.Numeric,
+        endAngle as Lang.Numeric,
+        color as Graphics.ColorType
+    ) as Void {
+        var lineWidth = 5;
+        var capRadius = lineWidth / 2.0;
+        var startRadians = startAngle * Math.PI / 180.0;
+        var endRadians = endAngle * Math.PI / 180.0;
 
-        return countText;
+        dc.setPenWidth(lineWidth);
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawArc(centerX, centerY, radius, Graphics.ARC_COUNTER_CLOCKWISE, startAngle, endAngle);
+        dc.fillCircle(centerX + radius * Math.cos(startRadians), centerY - radius * Math.sin(startRadians), capRadius);
+        dc.fillCircle(centerX + radius * Math.cos(endRadians), centerY - radius * Math.sin(endRadians), capRadius);
     }
 
-    private function drawSteps(dc as Dc) as Void {
-        var activityInfo = ActivityMonitor.getInfo();
-        var stepsText = "--";
+    private function drawDaylightProgress(dc as Dc) as Void {
+        var progress = 0.0;
+        var conditions = Weather.getCurrentConditions();
 
-        if ((activityInfo has :steps) && (activityInfo.steps != null)) {
-            stepsText = formatActivityCount(activityInfo.steps);
+        if ((conditions != null) && (conditions.observationLocationPosition != null)) {
+            var now = Time.now();
+            var location = conditions.observationLocationPosition;
+            var sunrise = Weather.getSunrise(location, now);
+            var sunset = Weather.getSunset(location, now);
+
+            if ((sunrise != null) && (sunset != null) && (sunset.value() > sunrise.value())) {
+                if (now.value() >= sunset.value()) {
+                    progress = 1.0;
+                } else if (now.value() > sunrise.value()) {
+                    progress = (now.value() - sunrise.value()).toFloat() /
+                        (sunset.value() - sunrise.value()).toFloat();
+                }
+            }
         }
 
-        var font = Graphics.FONT_XTINY;
-        var iconSize = Graphics.getFontHeight(font);
-        var textWidth = dc.getTextDimensions(stepsText, font)[0];
-        var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
-        var textX = iconX + iconSize;
-        var y = faceHeight * 0.11;
+        var startAngle = 245;
+        var endAngle = 295;
+        var offset = faceHeight * 0.02;
+        var radius = (faceWidth / 2) - offset;
+        var centerX = faceWidth / 2;
+        var centerY = faceHeight - radius - offset;
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
-        dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
-    }
+        drawRoundedArc(dc, centerX, centerY, radius, startAngle, endAngle, Graphics.COLOR_DK_GRAY);
 
-    private function drawFloorsClimbed(dc as Dc) as Void {
-        var activityInfo = ActivityMonitor.getInfo();
-        var floorsText = "--";
+        if (progress > 0.0) {
+            var progressEndAngle = Math.floor(startAngle + ((endAngle - startAngle) * progress));
 
-        if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
-            floorsText = formatActivityCount(activityInfo.floorsClimbed);
+            if (progressEndAngle > startAngle) {
+                drawRoundedArc(dc, centerX, centerY, radius, startAngle, progressEndAngle, Graphics.COLOR_WHITE);
+            }
         }
 
-        var font = Graphics.FONT_XTINY;
-        var iconX = faceWidth * 0.53;
-        var iconSize = Graphics.getFontHeight(font);
-        var textX = iconX + iconSize;
-        var y = faceHeight * 0.04;
+        var iconSize = Graphics.getFontHeight(Graphics.FONT_XTINY);
+        var sunX = faceWidth * 0.22;
+        var sunY = faceHeight * 0.86;
+        var moonX = faceWidth * 0.7;
+        var moonY = faceHeight * 0.865;
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
-        dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
-    }
-
-    private function drawHeartRate(dc as Dc) as Void {
-        var activityInfo = Activity.getActivityInfo();
-        var heartRateText = "--";
-
-        if ((activityInfo has :currentHeartRate) && (activityInfo.currentHeartRate != null)) {
-            heartRateText = activityInfo.currentHeartRate.toString();
-        }
-
-        var font = Graphics.FONT_XTINY;
-        var iconX = faceWidth * 0.3;
-        var iconSize = Graphics.getFontHeight(font);
-        var textX = iconX + iconSize;
-        var y = faceHeight * 0.04;
-
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, heart);
-        dc.drawText(textX, y, font, heartRateText, Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawScaledBitmap(sunX, sunY, iconSize, iconSize, sun);
+        dc.drawScaledBitmap(moonX, moonY, iconSize, iconSize, moon);
     }
 }

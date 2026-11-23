@@ -4,4 +4,6 @@
     <bitmap id="PawPrints" filename="paw-prints.png" dithering="none" />
     <bitmap id="Stairs" filename="stairs.png" dithering="none" />
     <bitmap id="Heart" filename="heart.png" dithering="none" />
+    <bitmap id="Sun" filename="sun.png" dithering="none" />
+    <bitmap id="Moon" filename="moon.png" dithering="none" />
 </drawables>
