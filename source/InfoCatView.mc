@@ -6,6 +6,7 @@ import Toybox.Math;
 import Toybox.System;
 import Toybox.Time;
 import Toybox.WatchUi;
+import Toybox.Weather;
 
 class InfoCatView extends WatchUi.WatchFace {
     private var faceWidth;
@@ -42,6 +43,7 @@ class InfoCatView extends WatchUi.WatchFace {
 
         drawBackground(dc);
         drawTime(dc);
+        drawTemperature(dc);
         drawSteps(dc);
         drawFloorsClimbed(dc);
         drawHeartRate(dc);
@@ -75,6 +77,29 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(faceWidth * 0.3, faceHeight * 0.345, timeFont, hoursText, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    private function drawTemperature(dc as Dc) as Void {
+        var conditions = Weather.getCurrentConditions();
+        var settings = System.getDeviceSettings();
+        var temperatureText = "--";
+        
+        if ((conditions != null) && (conditions.feelsLikeTemperature != null)) {
+            var temperature = conditions.feelsLikeTemperature.toFloat();
+            // regardless of set units temperature is stored as Celsius
+            if (settings.temperatureUnits == System.UNIT_STATUTE) {
+                // there we need to check if units are set to Fahrenheit and convert
+                temperature = (temperature * 9.0 / 5.0) + 32.0;
+            }
+            temperatureText = temperature.format("%.0f") + "°";
+        }
+
+        var font = Graphics.getVectorFont({:face => "RobotoCondensedBold", :size => 20});
+        var x = faceWidth * 0.51;
+        var y = faceHeight * 0.64;
+
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, font, temperatureText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     private function drawDate(dc as Dc) as Void {
