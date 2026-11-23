@@ -87,7 +87,7 @@ class InfoCatView extends WatchUi.WatchFace {
         var dayOfWeekY = faceHeight * 0.823;
         var dayOfMonthWidth = dc.getTextDimensions(dayOfMonth, font)[0];
         var dayOfMonthX = (faceWidth / 2) - (dayOfMonthWidth / 2);
-        var dayOfMonthY = dayOfWeekY + (faceHeight * 0.057);
+        var dayOfMonthY = dayOfWeekY + (faceHeight * 0.054);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dayOfWeekX, dayOfWeekY, font, dayOfWeek, Graphics.TEXT_JUSTIFY_LEFT);
