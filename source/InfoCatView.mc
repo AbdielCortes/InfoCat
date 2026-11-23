@@ -82,11 +82,10 @@ class InfoCatView extends WatchUi.WatchFace {
     private function drawTemperature(dc as Dc) as Void {
         var conditions = Weather.getCurrentConditions();
         var settings = System.getDeviceSettings();
-        var font = Graphics.FONT_XTINY;
         var temperatureText = "--";
-
-        if ((conditions != null) && (conditions.temperature != null)) {
-            var temperature = conditions.temperature.toFloat();
+        
+        if ((conditions != null) && (conditions.feelsLikeTemperature != null)) {
+            var temperature = conditions.feelsLikeTemperature.toFloat();
             // regardless of set units temperature is stored as Celsius
             if (settings.temperatureUnits == System.UNIT_STATUTE) {
                 // there we need to check if units are set to Fahrenheit and convert
@@ -95,6 +94,7 @@ class InfoCatView extends WatchUi.WatchFace {
             temperatureText = temperature.format("%.0f") + "°";
         }
 
+        var font = Graphics.getVectorFont({:face => "RobotoCondensedBold", :size => 20});
         var x = faceWidth * 0.51;
         var y = faceHeight * 0.64;
 
