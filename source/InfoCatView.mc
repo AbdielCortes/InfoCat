@@ -12,7 +12,6 @@ class InfoCatView extends WatchUi.WatchFace {
     private var faceHeight;
     private var background;
     private var pawPrints;
-    private var paw;
     private var stairs;
     private var heart;
 
@@ -26,7 +25,6 @@ class InfoCatView extends WatchUi.WatchFace {
         faceHeight = dc.getHeight();
         background = WatchUi.loadResource(Rez.Drawables.Cat);
         pawPrints = WatchUi.loadResource(Rez.Drawables.PawPrints);
-        paw = WatchUi.loadResource(Rez.Drawables.Paw);
         stairs = WatchUi.loadResource(Rez.Drawables.Stairs);
         heart = WatchUi.loadResource(Rez.Drawables.Heart);
         setLayout(Rez.Layouts.WatchFace(dc));
@@ -47,7 +45,7 @@ class InfoCatView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawFloorsClimbed(dc);
         drawHeartRate(dc);
-        // drawDate(dc);
+        drawDate(dc);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -79,20 +77,22 @@ class InfoCatView extends WatchUi.WatchFace {
         dc.drawText(faceWidth * 0.698, faceHeight * 0.345, timeFont, minutesText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    // private function drawDate(dc as Dc) as Void {
-    //     var dateInfo = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
-    //     var dayOfWeek = dateInfo.day_of_week;
-    //     var dayOfMonth = dateInfo.day.toString();
-    //     var font = Graphics.FONT_TINY;
-    //     var dayOfWeekX = faceWidth * 0.46;
-    //     var dayOfWeekY = faceHeight * 0.7;
-    //     var dayOfMonthX = faceWidth * 0.53;
-    //     var dayOfMonthY = faceHeight * 0.7;
+    private function drawDate(dc as Dc) as Void {
+        var dateInfo = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+        var dayOfWeek = dateInfo.day_of_week.toLower();
+        var dayOfMonth = dateInfo.day.toString();
+        var font = Graphics.FONT_XTINY;
+        var dayOfWeekWidth = dc.getTextDimensions(dayOfWeek, font)[0];
+        var dayOfWeekX = (faceWidth / 2) - (dayOfWeekWidth / 2);
+        var dayOfWeekY = faceHeight * 0.823;
+        var dayOfMonthWidth = dc.getTextDimensions(dayOfMonth, font)[0];
+        var dayOfMonthX = (faceWidth / 2) - (dayOfMonthWidth / 2);
+        var dayOfMonthY = dayOfWeekY + (faceHeight * 0.057);
 
-    //     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-    //     dc.drawText(dayOfWeekX, dayOfWeekY, font, dayOfWeek, Graphics.TEXT_JUSTIFY_RIGHT);
-    //     dc.drawText(dayOfMonthX, dayOfMonthY, font, dayOfMonth, Graphics.TEXT_JUSTIFY_LEFT);
-    // }
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(dayOfWeekX, dayOfWeekY, font, dayOfWeek, Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(dayOfMonthX, dayOfMonthY, font, dayOfMonth, Graphics.TEXT_JUSTIFY_LEFT);
+    }
 
     private function formatActivityCount(count as Number) as String {
         var countText = count.toString();
@@ -113,16 +113,15 @@ class InfoCatView extends WatchUi.WatchFace {
             var steps = activityInfo.steps;
             var stepsText = formatActivityCount(steps);
             var font = Graphics.FONT_XTINY;
+            var iconSize = Graphics.getFontHeight(font);
             var textWidth = dc.getTextDimensions(stepsText, font)[0];
-            var textX = (faceWidth / 2) - (textWidth / 2);
-            var textY = faceHeight * 0.83;
-            var iconSize = Graphics.getFontHeight(font) * 0.7;
-            var iconX = (faceWidth / 2) - (iconSize / 2);
-            var iconY = faceHeight * 0.9;   
+            var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
+            var textX = iconX + iconSize;
+            var y = faceHeight * 0.11;
 
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(textX, textY, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawScaledBitmap(iconX, iconY, iconSize, iconSize, paw);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
+            dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 
