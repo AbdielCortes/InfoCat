@@ -108,52 +108,56 @@ class InfoCatView extends WatchUi.WatchFace {
 
     private function drawSteps(dc as Dc) as Void {
         var activityInfo = ActivityMonitor.getInfo();
+        var stepsText = "--";
 
         if ((activityInfo has :steps) && (activityInfo.steps != null)) {
-            var steps = activityInfo.steps;
-            var stepsText = formatActivityCount(steps);
-            var font = Graphics.FONT_XTINY;
-            var iconSize = Graphics.getFontHeight(font);
-            var textWidth = dc.getTextDimensions(stepsText, font)[0];
-            var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
-            var textX = iconX + iconSize;
-            var y = faceHeight * 0.11;
-
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
-            dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
+            stepsText = formatActivityCount(activityInfo.steps);
         }
+
+        var font = Graphics.FONT_XTINY;
+        var iconSize = Graphics.getFontHeight(font);
+        var textWidth = dc.getTextDimensions(stepsText, font)[0];
+        var iconX = (faceWidth / 2) - (iconSize + textWidth) / 2;
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.11;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, pawPrints);
+        dc.drawText(textX, y, font, stepsText, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
     private function drawFloorsClimbed(dc as Dc) as Void {
         var activityInfo = ActivityMonitor.getInfo();
+        var floorsText = "--";
 
         if ((activityInfo has :floorsClimbed) && (activityInfo.floorsClimbed != null)) {
-            var floorsText = formatActivityCount(activityInfo.floorsClimbed);
-            var font = Graphics.FONT_XTINY;
-            var iconX = faceWidth * 0.53;
-            var iconSize = Graphics.getFontHeight(font);
-            var textX = iconX + iconSize;
-            var y = faceHeight * 0.04;
-
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
-            dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
+            floorsText = formatActivityCount(activityInfo.floorsClimbed);
         }
+
+        var font = Graphics.FONT_XTINY;
+        var iconX = faceWidth * 0.53;
+        var iconSize = Graphics.getFontHeight(font);
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.04;
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawScaledBitmap(iconX, y, iconSize, iconSize, stairs);
+        dc.drawText(textX, y, font, floorsText, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
     private function drawHeartRate(dc as Dc) as Void {
         var activityInfo = Activity.getActivityInfo();
-        var font = Graphics.FONT_XTINY;
-        var iconX = faceWidth * 0.3;
-        var iconSize = Graphics.getFontHeight(font);
-        var textX = iconX + iconSize;
-        var y = faceHeight * 0.04;
         var heartRateText = "--";
 
         if ((activityInfo has :currentHeartRate) && (activityInfo.currentHeartRate != null)) {
             heartRateText = activityInfo.currentHeartRate.toString();
         }
+
+        var font = Graphics.FONT_XTINY;
+        var iconX = faceWidth * 0.3;
+        var iconSize = Graphics.getFontHeight(font);
+        var textX = iconX + iconSize;
+        var y = faceHeight * 0.04;
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawScaledBitmap(iconX, y, iconSize, iconSize, heart);
